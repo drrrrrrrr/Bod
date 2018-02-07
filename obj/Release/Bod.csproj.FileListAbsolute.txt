@@ -87,3 +87,9 @@ c:\users\дима\source\repos\Bod\Bod\bin\ru\Microsoft.Owin.Security.MicrosoftA
 c:\users\дима\source\repos\Bod\Bod\obj\Release\Bod.csproj.CoreCompileInputs.cache
 c:\users\дима\source\repos\Bod\Bod\obj\Release\Bod.dll
 c:\users\дима\source\repos\Bod\Bod\obj\Release\Bod.pdb
+c:\users\дима\source\repos\Bod\Bod\bin\System.Net.Http.Formatting.dll
+c:\users\дима\source\repos\Bod\Bod\bin\System.Web.Http.dll
+c:\users\дима\source\repos\Bod\Bod\bin\System.Web.Http.WebHost.dll
+c:\users\дима\source\repos\Bod\Bod\bin\System.Net.Http.Formatting.xml
+c:\users\дима\source\repos\Bod\Bod\bin\System.Web.Http.xml
+c:\users\дима\source\repos\Bod\Bod\bin\System.Web.Http.WebHost.xml
