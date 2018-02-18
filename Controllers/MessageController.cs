@@ -23,14 +23,14 @@ namespace Bod.Controllers
             {
                 if (update.message != null)
                 {
-                        SendAnswer(update, Text(update), id);
+                        SendAnswer(update,update.message.chat.id, Text(update), id);
                     return Ok();
                 }
                 if(update.callback_query != null)
                 { 
                     string k = update.callback_query.id;
                     string token;
-                    using (botEntities bot = new botEntities())
+                    using (botEntities1 bot = new botEntities1())
                         token = bot.Token.Where(x => x.id == id).First().token1;
                     SendMessage(update.callback_query.message.chat.id, Text(update), token);
                     return Ok();
@@ -44,19 +44,19 @@ namespace Bod.Controllers
             string answer = JsonConvert.SerializeObject(up);
             return answer;
         }
-        public void SendAnswer(Update update, string message, int? id)
+        public void SendAnswer(Update update,long chat_id, string message, int? id)
         {
            string answer = message;
             try
             {
-                InlineMenu(update, id);
+                MenuFromBd(update, chat_id, id);
             }
             catch
             {
                 answer += "  сломался";
             }
             string token;
-            using (botEntities bot = new botEntities())
+            using (botEntities1 bot = new botEntities1())
                 token = bot.Token.Where(x => x.id == id).First().token1;
             if (update.message.chat.id != 0)
                 SendMessage(update.message.chat.id, answer, token);
@@ -80,10 +80,10 @@ namespace Bod.Controllers
         }
 
 
-        void ChangeMessage(Update update, string message, string reply_markup = "",int? id)
+        void ChangeMessage(Update update, string message, int? id, string reply_markup = "")
         {
             string token;
-            using (botEntities bot = new botEntities())
+            using (botEntities1 bot = new botEntities1())
                 token = bot.Token.Where(x => x.id == id).First().token1;
             string BaseUrl = "https://api.telegram.org/bot";
 
@@ -96,7 +96,38 @@ namespace Bod.Controllers
                 nvc.Add("reply_markup", reply_markup);
             using (WebClient client = new WebClient())
                 client.UploadValues(adress, nvc);
+        }
 
+        void AddMainButtons(InlineKeyboard keyboard)
+        {
+            List<InlineKeyboardButton> line = new List<InlineKeyboardButton>();
+            {
+                new InlineKeyboardButton("Есть вопрос", "?");
+                new InlineKeyboardButton("О нас","about");
+            };
+            keyboard.AddLine(line);
+        }
+        void MenuFromBd(Update update,long chat_id, int? id)
+        {
+            List<Category> list;
+            string token = "";
+            using (botEntities1 bd = new botEntities1())
+            {
+                list = bd.Category.Where(x => x.Token.id == id).ToList();
+                token = bd.Token.Where(x => x.id == id).First().token1;
+            }
+            InlineKeyboard keyboard = new InlineKeyboard();
+            List<InlineKeyboardButton> but = new List<InlineKeyboardButton>();
+            foreach(Category k in list)
+            {
+                but.Add(new InlineKeyboardButton(
+                    k.NameCategory
+                    ));
+            }
+            keyboard.AddLine(but);
+            AddMainButtons(keyboard); 
+            string reply_markup = JsonConvert.SerializeObject(keyboard);
+            SendMessage(chat_id, "Работает", token,reply_markup);
         }
         //    void InlineMenu(long chat_id)
         //    {
@@ -113,7 +144,7 @@ namespace Bod.Controllers
         public void MyMenu(Update update,int? id)
         {
             Token t;
-            using (botEntities bot = new botEntities())
+            using (botEntities1 bot = new botEntities1())
                 t = bot.Token.Where(x => x.id == id).First();
             string BaseUrl = "https://api.telegram.org/bot";
             string address = BaseUrl + t.token1 + "/sendMessage";
@@ -147,7 +178,7 @@ namespace Bod.Controllers
             InlineKeyboard kb = new InlineKeyboard(listttInline);
             string reply_markup = JsonConvert.SerializeObject(kb);
             string token;
-            using (botEntities bot = new botEntities())
+            using (botEntities1 bot = new botEntities1())
                 token = bot.Token.Where(x => x.id == id).First().token1;
             SendMessage(update.message.chat.id, reply_markup,token,reply_markup);
         }

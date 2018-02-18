@@ -201,6 +201,24 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Models\botDb.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>botDb.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\botDb.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>botDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\botDb.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>botDb.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Category.cs">
+      <DependentUpon>botDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -246,31 +264,26 @@
     <Compile Include="Models\Bot\WebhookInfo.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Product.cs">
+      <DependentUpon>botDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Models\sysdiagrams.cs">
-      <DependentUpon>TokenDb.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Token.cs">
-      <DependentUpon>TokenDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\TokenDb.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TokenDb.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\TokenDb.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TokenDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\TokenDb.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TokenDb.edmx</DependentUpon>
+      <DependentUpon>botDb.tt</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Models\botDb.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>botDb.edmx</DependentUpon>
+      <LastGenOutput>botDb.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\botDb.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>botDb.edmx</DependentUpon>
+      <LastGenOutput>botDb.cs</LastGenOutput>
+    </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Css\application.min.css" />
@@ -462,6 +475,13 @@
     <Content Include="Css\font\open-sans-light.woff" />
     <Content Include="Css\font\open-sans-semibold.woff" />
     <Content Include="Css\font\open-sans.woff" />
+    <EntityDeploy Include="Models\botDb.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>botDb.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\botDb.edmx.diagram">
+      <DependentUpon>botDb.edmx</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\CreateBotShop - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -474,16 +494,6 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Models\TokenDb.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>TokenDb.edmx</DependentUpon>
-      <LastGenOutput>TokenDb.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\TokenDb.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>TokenDb.edmx</DependentUpon>
-      <LastGenOutput>TokenDb.cs</LastGenOutput>
-    </Content>
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -520,13 +530,6 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
-    <EntityDeploy Include="Models\TokenDb.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>TokenDb.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\TokenDb.edmx.diagram">
-      <DependentUpon>TokenDb.edmx</DependentUpon>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

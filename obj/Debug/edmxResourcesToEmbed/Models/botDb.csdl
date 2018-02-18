@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="botModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Category">
+    <Key>
+      <PropertyRef Name="CategoryId" />
+    </Key>
+    <Property Name="CategoryId" Type="Int32" Nullable="false" />
+    <Property Name="NameCategory" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="TokenId" Type="Int32" />
+    <NavigationProperty Name="Token" Relationship="Self.FK__Category__TokenI__5EBF139D" FromRole="Category" ToRole="Token" />
+    <NavigationProperty Name="Product" Relationship="Self.FK__Product__Categor__656C112C" FromRole="Category" ToRole="Product" />
+  </EntityType>
+  <EntityType Name="Product">
+    <Key>
+      <PropertyRef Name="ProductId" />
+    </Key>
+    <Property Name="ProductId" Type="Int32" Nullable="false" />
+    <Property Name="ProductName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="ProductDescription" Type="String" MaxLength="230" FixedLength="false" Unicode="false" />
+    <Property Name="ProductPrice" Type="Int32" />
+    <Property Name="CategoryId" Type="Int32" />
+    <NavigationProperty Name="Category" Relationship="Self.FK__Product__Categor__656C112C" FromRole="Product" ToRole="Category" />
+  </EntityType>
+  <EntityType Name="Token">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="token1" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Category" Relationship="Self.FK__Category__TokenI__5EBF139D" FromRole="Token" ToRole="Category" />
+  </EntityType>
+  <Association Name="FK__Category__TokenI__5EBF139D">
+    <End Role="Token" Type="Self.Token" Multiplicity="0..1" />
+    <End Role="Category" Type="Self.Category" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Token">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Category">
+        <PropertyRef Name="TokenId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Product__Categor__656C112C">
+    <End Role="Category" Type="Self.Category" Multiplicity="0..1" />
+    <End Role="Product" Type="Self.Product" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Category">
+        <PropertyRef Name="CategoryId" />
+      </Principal>
+      <Dependent Role="Product">
+        <PropertyRef Name="CategoryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="botEntities1" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Category" EntityType="Self.Category" />
+    <EntitySet Name="Product" EntityType="Self.Product" />
+    <EntitySet Name="Token" EntityType="Self.Token" />
+    <AssociationSet Name="FK__Category__TokenI__5EBF139D" Association="Self.FK__Category__TokenI__5EBF139D">
+      <End Role="Token" EntitySet="Token" />
+      <End Role="Category" EntitySet="Category" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Product__Categor__656C112C" Association="Self.FK__Product__Categor__656C112C">
+      <End Role="Category" EntitySet="Category" />
+      <End Role="Product" EntitySet="Product" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

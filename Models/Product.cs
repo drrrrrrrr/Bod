@@ -12,18 +12,14 @@ namespace Bod.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Token
+    public partial class Product
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Token()
-        {
-            this.Category = new HashSet<Category>();
-        }
+        public int ProductId { get; set; }
+        public string ProductName { get; set; }
+        public string ProductDescription { get; set; }
+        public Nullable<int> ProductPrice { get; set; }
+        public Nullable<int> CategoryId { get; set; }
     
-        public int id { get; set; }
-        public string token1 { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Category> Category { get; set; }
+        public virtual Category Category { get; set; }
     }
 }

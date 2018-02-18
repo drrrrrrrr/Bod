@@ -13,10 +13,10 @@ namespace Bod.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class botEntities : DbContext
+    public partial class botEntities1 : DbContext
     {
-        public botEntities()
-            : base("name=botEntities")
+        public botEntities1()
+            : base("name=botEntities1")
         {
         }
     
@@ -25,7 +25,8 @@ namespace Bod.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
+        public virtual DbSet<Category> Category { get; set; }
+        public virtual DbSet<Product> Product { get; set; }
         public virtual DbSet<Token> Token { get; set; }
     }
 }

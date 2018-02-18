@@ -1,4 +1,5 @@
-﻿using Bod.Models;
+﻿using Bod;
+using Bod.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -15,7 +16,24 @@ namespace BotShopOfficial.Controllers
     {
         public ActionResult Index()
         {
+            botEntities1 bt = new botEntities1();
+            List<Token>  t = bt.Token.ToList();
+            List<Category> cat = bt.Category.Where(x => x.Token.id == 1).ToList();
+
+            string l;
             return View();
+        }
+        public void Add()
+        {
+            botEntities1 bt = new botEntities1();
+            Product p = new Product
+            {
+                CategoryId = 1,
+                ProductDescription = "safasdfasdf",
+                ProductPrice = 200,
+                ProductName = "Ничего"
+            };
+            bt.Product.Add(p);
         }
         public string About()
         {
@@ -29,7 +47,7 @@ namespace BotShopOfficial.Controllers
             //    SetWebHook(tokens[i], i);
             //}
             string k = "1";
-            using (botEntities bd = new botEntities())
+            using (botEntities1 bd = new botEntities1())
             {
                 //Token a = new Token();
                 //    a.token1 = "513919028:AAH3YpNoZAeZwo5NItLEmIXUhobfR5ziSRU";
