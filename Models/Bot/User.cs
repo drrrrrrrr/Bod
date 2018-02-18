@@ -10,21 +10,21 @@ namespace Bod.Models.Bot
         /// <summary>
         /// Unique identifier for this user, or bot, or group chat
         /// </summary>
-        public long Id { get; set; }
+        public long id { get; set; }
 
         /// <summary>
         /// User‘s or bot’s first name
         /// </summary>
-        public string FirstName { get; set; }
+        public string first_name { get; set; }
 
         /// <summary>
         /// Optional. User‘s or bot’s last name
         /// </summary>
-        public string LastName { get; set; }
+        public string last_name { get; set; }
 
         /// <summary>
         /// Optional. User‘s or bot’s username
         /// </summary>
-        public string Username { get; set; }
+        public string username { get; set; }
     }
 }

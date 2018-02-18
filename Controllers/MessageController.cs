@@ -21,47 +21,51 @@ namespace Bod.Controllers
         {
             if (id != null)
             {
-                if (update.message.text != null)
+                if (update.message != null)
                 {
-                    SendAnswer(update, update.message.text, id);
+                        SendAnswer(update, Text(update), id);
+                    return Ok();
                 }
-                if(update.callback_query.data!=null)
+                if(update.callback_query != null)
                 { 
-                    string k = update.callback_query.data;
+                    string k = update.callback_query.id;
                     string token;
                     using (botEntities bot = new botEntities())
                         token = bot.Token.Where(x => x.id == id).First().token1;
-                    SendMessage(update.callback_query.message.chat.id, update.callback_query.data, token);
+                    SendMessage(update.callback_query.message.chat.id, Text(update), token);
+                    return Ok();
                 }
 
             }
             return Ok();
         }
+        string Text(Update up)
+        {
+            string answer = JsonConvert.SerializeObject(up);
+            return answer;
+        }
         public void SendAnswer(Update update, string message, int? id)
         {
-           string answer = "";
+           string answer = message;
             try
             {
                 InlineMenu(update, id);
             }
             catch
             {
-                answer += "сломался";
+                answer += "  сломался";
             }
             string token;
             using (botEntities bot = new botEntities())
                 token = bot.Token.Where(x => x.id == id).First().token1;
-            if(update.message.chat.id!=0)
-                 SendMessage(update.message.chat.id, answer, token);
-            else
-            {
-                SendMessage(update.callback_query.message.chat.id, answer, token);
-            }
+            if (update.message.chat.id != 0)
+                SendMessage(update.message.chat.id, answer, token);
 
         }
 
         static void SendMessage(long chat_id, string message, string token, string reply_markup = "s")
         {
+
             string BaseUrl = "https://api.telegram.org/bot";
             string address = BaseUrl + token + "/sendMessage";
             NameValueCollection nvc = new NameValueCollection();
@@ -76,22 +80,24 @@ namespace Bod.Controllers
         }
 
 
-        //void ChangeMessage(Update item, string message, string reply_markup = "")
-        //{
+        void ChangeMessage(Update update, string message, string reply_markup = "",int? id)
+        {
+            string token;
+            using (botEntities bot = new botEntities())
+                token = bot.Token.Where(x => x.id == id).First().token1;
+            string BaseUrl = "https://api.telegram.org/bot";
 
-        //    string BaseUrl= "https://api.telegram.org/bot";
+            string adress = BaseUrl + token + "/editMessageText";
+            NameValueCollection nvc = new NameValueCollection();
+            nvc.Add("chat_id", update.callback_query.message.chat.id.ToString());
+            nvc.Add("message_id", update.callback_query.message.message_id.ToString());
+            nvc.Add("text", message);
+            if (reply_markup != "")
+                nvc.Add("reply_markup", reply_markup);
+            using (WebClient client = new WebClient())
+                client.UploadValues(adress, nvc);
 
-        //    string adress = BaseUrl + token + "/editMessageText";
-        //    NameValueCollection nvc = new NameValueCollection();
-        //    nvc.Add("chat_id", item.callback_query.message.chat.id.ToString());
-        //    nvc.Add("message_id", item.callback_query.message.message_id.ToString());
-        //    nvc.Add("text", message);
-        //    if (reply_markup != "")
-        //        nvc.Add("reply_markup", reply_markup);
-        //    using(WebClient client =new WebClient())
-        //       client.UploadValues(adress, nvc);
-
-        //}
+        }
         //    void InlineMenu(long chat_id)
         //    {
 
@@ -143,7 +149,7 @@ namespace Bod.Controllers
             string token;
             using (botEntities bot = new botEntities())
                 token = bot.Token.Where(x => x.id == id).First().token1;
-            SendMessage(update.message.chat.id, "", token,reply_markup);
+            SendMessage(update.message.chat.id, reply_markup,token,reply_markup);
         }
         //    string Shop(string shop, out string reply_markup)
         //    {

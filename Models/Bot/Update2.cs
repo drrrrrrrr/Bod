@@ -189,10 +189,32 @@ namespace Bod.Models.Bot2
     {
         public long update_id { get; set; }
         public Message message { get; set; }
-        public CallbackQuery callback_query { get; set; }
+        public Callback_Query callback_query { get; set; }
 
     }
-    public class CallbackQuery
+    public class User
+    {
+        /// <summary>
+        /// Unique identifier for this user, or bot, or group chat
+        /// </summary>
+        public long id { get; set; }
+
+        /// <summary>
+        /// User‘s or bot’s first name
+        /// </summary>
+        public string first_name { get; set; }
+
+        /// <summary>
+        /// Optional. User‘s or bot’s last name
+        /// </summary>
+        public string last_name { get; set; }
+
+        /// <summary>
+        /// Optional. User‘s or bot’s username
+        /// </summary>
+        public string username { get; set; }
+    }
+    public class Callback_Query
     {
         /// <summary>
         /// Unique identifier for this query
@@ -209,7 +231,7 @@ namespace Bod.Models.Bot2
         /// Note that message content and message date will not be available if the message is too old
         /// </summary>
         public Message message { get; set; }
-
+        public User from { get; set; }
         /// <summary>
         /// Optional. Identifier of the message sent via the bot in inline mode, that originated the query
         /// </summary>
