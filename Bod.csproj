@@ -56,6 +56,8 @@
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -208,11 +210,65 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Bot\CallbackQuery.cs" />
+    <Compile Include="Models\Bot\Chat.cs" />
+    <Compile Include="Models\Bot\ChatMember.cs" />
+    <Compile Include="Models\Bot\ChatMemberStatus.cs" />
+    <Compile Include="Models\Bot\ChatType.cs" />
+    <Compile Include="Models\Bot\ChosenInlineResult.cs" />
+    <Compile Include="Models\Bot\Contact.cs" />
+    <Compile Include="Models\Bot\Document.cs" />
+    <Compile Include="Models\Bot\File.cs" />
+    <Compile Include="Models\Bot\ForceReply.cs" />
+    <Compile Include="Models\Bot\InlineKeyBoardButton.cs" />
+    <Compile Include="Models\Bot\InlineKeyboard.cs" />
+    <Compile Include="Models\Bot\InlineKeyboardMarkup.cs" />
+    <Compile Include="Models\Bot\InlineQuery.cs" />
+    <Compile Include="Models\Bot\KeyboardButton.cs" />
+    <Compile Include="Models\Bot\Location.cs" />
+    <Compile Include="Models\Bot\Message.cs" />
+    <Compile Include="Models\Bot\MessageEntity.cs" />
+    <Compile Include="Models\Bot\MessageEntityType.cs" />
+    <Compile Include="Models\Bot\PhotoSize.cs" />
+    <Compile Include="Models\Bot\ReplyKeyboardMarkup.cs" />
+    <Compile Include="Models\Bot\ReplyKeyboardRemove.cs" />
+    <Compile Include="Models\Bot\ReplyMarkupBase.cs" />
+    <Compile Include="Models\Bot\ResponseParameters.cs" />
+    <Compile Include="Models\Bot\Sticker.cs" />
+    <Compile Include="Models\Bot\TeleButtons.cs" />
     <Compile Include="Models\Bot\Update.cs" />
+    <Compile Include="Models\Bot\Update2.cs" />
+    <Compile Include="Models\Bot\User.cs" />
+    <Compile Include="Models\Bot\UserProfilePhotos.cs" />
+    <Compile Include="Models\Bot\Venue.cs" />
+    <Compile Include="Models\Bot\Video.cs" />
+    <Compile Include="Models\Bot\Voice.cs" />
+    <Compile Include="Models\Bot\WebhookInfo.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Models\sysdiagrams.cs">
+      <DependentUpon>TokenDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Token.cs">
+      <DependentUpon>TokenDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TokenDb.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TokenDb.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TokenDb.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TokenDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TokenDb.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TokenDb.edmx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
@@ -418,6 +474,16 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Models\TokenDb.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>TokenDb.edmx</DependentUpon>
+      <LastGenOutput>TokenDb.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\TokenDb.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>TokenDb.edmx</DependentUpon>
+      <LastGenOutput>TokenDb.cs</LastGenOutput>
+    </Content>
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -438,7 +504,7 @@
     <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
-    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Login2.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
@@ -453,6 +519,14 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <EntityDeploy Include="Models\TokenDb.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>TokenDb.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\TokenDb.edmx.diagram">
+      <DependentUpon>TokenDb.edmx</DependentUpon>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -469,6 +543,9 @@
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
