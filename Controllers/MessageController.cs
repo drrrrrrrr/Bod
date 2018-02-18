@@ -23,19 +23,14 @@ namespace Bod.Controllers
             {
                 if (update.message != null)
                 {
-                        SendAnswer(update,update.message.chat.id, Text(update), id);
+                    SendAnswer(update,update.message.chat.id, Text(update), id);
                     return Ok();
                 }
                 if(update.callback_query != null)
                 { 
-                    string k = update.callback_query.id;
-                    string token;
-                    using (botEntities1 bot = new botEntities1())
-                        token = bot.Token.Where(x => x.id == id).First().token1;
-                    SendMessage(update.callback_query.message.chat.id, Text(update), token);
+                    AnswerIsQuery(update, id);
                     return Ok();
                 }
-
             }
             return Ok();
         }
@@ -46,24 +41,23 @@ namespace Bod.Controllers
         }
         public void SendAnswer(Update update,long chat_id, string message, int? id)
         {
-           string answer = message;
+            string reply_markup = "";
+            string answer = "";
             try
             {
-                MenuFromBd(update, chat_id, id);
+                answer = MainMenu(update, id, out reply_markup);
             }
             catch
             {
                 answer += "  сломался";
             }
-            string token;
-            using (botEntities1 bot = new botEntities1())
-                token = bot.Token.Where(x => x.id == id).First().token1;
+            string token = ReceiveToken(update, id);
             if (update.message.chat.id != 0)
-                SendMessage(update.message.chat.id, answer, token);
+                SendMessage(update.message.chat.id, answer, token,reply_markup);
 
         }
 
-        static void SendMessage(long chat_id, string message, string token, string reply_markup = "s")
+        static void SendMessage(long chat_id, string message, string token, string reply_markup = "")
         {
 
             string BaseUrl = "https://api.telegram.org/bot";
@@ -71,7 +65,7 @@ namespace Bod.Controllers
             NameValueCollection nvc = new NameValueCollection();
             nvc.Add("chat_id", chat_id.ToString());
             nvc.Add("text", message);
-            if (reply_markup != "s")
+            if (reply_markup != "")
             {
                 nvc.Add("reply_markup", reply_markup);
             }
@@ -79,12 +73,16 @@ namespace Bod.Controllers
                 client.UploadValues(address, nvc);
         }
 
-
-        void ChangeMessage(Update update, string message, int? id, string reply_markup = "")
+        string ReceiveToken(Update update,int? id)
         {
             string token;
             using (botEntities1 bot = new botEntities1())
                 token = bot.Token.Where(x => x.id == id).First().token1;
+            return token;
+        }
+        void ChangeMessage(Update update, string message, int? id, string reply_markup = "")
+        {
+            string token = ReceiveToken(update, id);
             string BaseUrl = "https://api.telegram.org/bot";
 
             string adress = BaseUrl + token + "/editMessageText";
@@ -98,36 +96,49 @@ namespace Bod.Controllers
                 client.UploadValues(adress, nvc);
         }
 
+        void AnswerIsQuery(Update update,int? id)
+        {
+            string reply_markup = "";
+            string answer = "";
+            
+            switch(update.callback_query.data)
+            {
+                default:
+                    answer = MainMenu(update, id, out reply_markup); 
+                    break;
+            }
+            answer += Environment.NewLine + update.callback_query.data;
+            ChangeMessage(update, answer, id, reply_markup);
+        }
         void AddMainButtons(InlineKeyboard keyboard)
         {
-            List<InlineKeyboardButton> line = new List<InlineKeyboardButton>();
+            List<InlineKeyboardButton> line = new List<InlineKeyboardButton>()
             {
-                new InlineKeyboardButton("Есть вопрос", "?");
-                new InlineKeyboardButton("О нас","about");
+                new InlineKeyboardButton("Есть вопрос", "?" ),
+                new InlineKeyboardButton("О нас", "about" )
             };
             keyboard.AddLine(line);
         }
-        void MenuFromBd(Update update,long chat_id, int? id)
+        string MainMenu(Update update,int? id,out string reply_markup)
         {
             List<Category> list;
             string token = "";
+            int i = 0;
             using (botEntities1 bd = new botEntities1())
             {
                 list = bd.Category.Where(x => x.Token.id == id).ToList();
                 token = bd.Token.Where(x => x.id == id).First().token1;
             }
             InlineKeyboard keyboard = new InlineKeyboard();
-            List<InlineKeyboardButton> but = new List<InlineKeyboardButton>();
             foreach(Category k in list)
             {
-                but.Add(new InlineKeyboardButton(
+                keyboard.AddButton(new InlineKeyboardButton(
                     k.NameCategory
-                    ));
+                    ),i++/2);
             }
-            keyboard.AddLine(but);
             AddMainButtons(keyboard); 
-            string reply_markup = JsonConvert.SerializeObject(keyboard);
-            SendMessage(chat_id, "Работает", token,reply_markup);
+            reply_markup = JsonConvert.SerializeObject(keyboard);
+            return "Все категории";
         }
         //    void InlineMenu(long chat_id)
         //    {
@@ -177,9 +188,7 @@ namespace Bod.Controllers
             List<List<InlineKeyboardButton>> listttInline = new List<List<InlineKeyboardButton>>() { listInline };
             InlineKeyboard kb = new InlineKeyboard(listttInline);
             string reply_markup = JsonConvert.SerializeObject(kb);
-            string token;
-            using (botEntities1 bot = new botEntities1())
-                token = bot.Token.Where(x => x.id == id).First().token1;
+            string token = ReceiveToken(update, id);
             SendMessage(update.message.chat.id, reply_markup,token,reply_markup);
         }
         //    string Shop(string shop, out string reply_markup)
