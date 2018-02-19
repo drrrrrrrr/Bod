@@ -59,7 +59,6 @@ namespace Bod.Controllers
 
         static void SendMessage(long chat_id, string message, string token, string reply_markup = "")
         {
-
             string BaseUrl = "https://api.telegram.org/bot";
             string address = BaseUrl + token + "/sendMessage";
             NameValueCollection nvc = new NameValueCollection();
@@ -99,12 +98,20 @@ namespace Bod.Controllers
         void AnswerIsQuery(Update update,int? id)
         {
             string reply_markup = "";
-            string answer = "";
+            string answer = "ll";
             
             switch(update.callback_query.data)
             {
+                case "?":
+                    answer = "Вопрос!";
+                    MainMenu(update,id,out reply_markup);
+                    break;
+                case "about":
+                    answer = "Что-нибудь можно написать";
+                    MainMenu(update, id, out reply_markup);
+                    break;
                 default:
-                    answer = MainMenu(update, id, out reply_markup); 
+                    answer = Shop(update.callback_query.data , update, id, out reply_markup); 
                     break;
             }
             answer += Environment.NewLine + update.callback_query.data;
@@ -118,6 +125,58 @@ namespace Bod.Controllers
                 new InlineKeyboardButton("О нас", "about" )
             };
             keyboard.AddLine(line);
+        }
+        string Shop(string shop,Update update, int? id,out string reply_markup)
+        {
+            string category = shop.Split(' ')[0];
+            string nameProduct = shop.Split(' ').Length < 2 ? "" : shop.Split(' ')[1];
+            string answer="Привет";
+            reply_markup = "";
+            List<Category> cat=null;
+            List<Product> p=null;
+           // SendMessage(update.callback_query.from.id, category , ReceiveToken(update, id));
+            using (botEntities1 bd = new botEntities1())
+            {
+                try
+                {
+                    cat = bd.Category.Where(x => x.Token.id == id).ToList();
+                    p= cat.Where(x => x.NameCategory == category).First().Product.ToList();
+                    if (nameProduct == "") nameProduct = p[0].ProductName;
+                }
+                catch
+                {
+              //   SendMessage(update.callback_query.from.id, "БД УПало", ReceiveToken(update, id));
+                }
+            }
+
+            //try
+            //{
+            //    SendMessage(update.callback_query.from.id, p.Count.ToString(), ReceiveToken(update, id));
+            //}
+            //catch
+            //{
+            //    SendMessage(update.callback_query.from.id, "равно 0", ReceiveToken(update, id));
+            //}
+            //list = cat.Where(x => x.NameCategory == category).First();
+            //if (list == null)
+            //{
+            //    SendMessage(update.callback_query.from.id, "null", ReceiveToken(update, id));
+            //}
+            //else SendMessage(update.callback_query.from.id, list.Product.Count.ToString(), ReceiveToken(update, id));
+            InlineKeyboard keyboard = new InlineKeyboard();
+            int i = 0;
+            foreach (Product k in p)
+            {
+                keyboard.AddButton(new InlineKeyboardButton(
+
+                  k.ProductName,k.Category.NameCategory + " " + k.ProductName), i++ / 2);
+            }
+
+            Product chooseProduct = p.Where(x => x.ProductName == nameProduct).First();
+            answer += chooseProduct.ProductPrice + Environment.NewLine + "  " + " " + chooseProduct.ProductDescription;
+            AddMainButtons(keyboard);
+            reply_markup = JsonConvert.SerializeObject(keyboard);
+            return answer;
         }
         string MainMenu(Update update,int? id,out string reply_markup)
         {
@@ -140,57 +199,9 @@ namespace Bod.Controllers
             reply_markup = JsonConvert.SerializeObject(keyboard);
             return "Все категории";
         }
-        //    void InlineMenu(long chat_id)
-        //    {
-
-        //InlineKeyboardButton button1 = new InlineKeyboardButton("ya", "ya.ru");
-        //InlineKeyboardButton button2 = new InlineKeyboardButton("vk", "vk.ru");
-        //List<InlineKeyboardButton> listInline = new List<InlineKeyboardButton> { button1, button2 };
-        //List<List<InlineKeyboardButton>> listttInline = new List<List<InlineKeyboardButton>>() { listInline };
-        //InlineKeyboard kb = new InlineKeyboard(listttInline);
-        //string reply_markup = JsonConvert.SerializeObject(kb);
-        //SendMessage(chat_id, "Inline_menu", reply_markup);
-
-        //    }
-        public void MyMenu(Update update,int? id)
-        {
-            Token t;
-            using (botEntities1 bot = new botEntities1())
-                t = bot.Token.Where(x => x.id == id).First();
-            string BaseUrl = "https://api.telegram.org/bot";
-            string address = BaseUrl + t.token1 + "/sendMessage";
-            NameValueCollection nvc = new NameValueCollection();
-            nvc.Add("chat_id", update.message.chat.id.ToString());
-            nvc.Add("text", "привет");
-            List<string> keyboardb1 = new List<string>()
-        {
-            "Да","Нет"
-        };
-            List<string> keyboardb2 = new List<string>()
-        {
-            "Ура","Не Ура"
-        };
-            List<List<string>> keybord = new List<List<string>>()
-        {
-            keyboardb1,keyboardb2
-        };
-            TeleButtons tel = new TeleButtons(keybord);
-            string reply_markup = JsonConvert.SerializeObject(tel);
-            nvc.Add("reply_markup", reply_markup);
-            using (WebClient client = new WebClient())
-                client.UploadValues(address, nvc);
-        }
-       public void InlineMenu(Update update,int? id)
-       {
-            InlineKeyboardButton button1 = new InlineKeyboardButton("ya", "ya");
-            InlineKeyboardButton button2 = new InlineKeyboardButton("vk", "vk");
-            List<InlineKeyboardButton> listInline = new List<InlineKeyboardButton> { button1, button2 };
-            List<List<InlineKeyboardButton>> listttInline = new List<List<InlineKeyboardButton>>() { listInline };
-            InlineKeyboard kb = new InlineKeyboard(listttInline);
-            string reply_markup = JsonConvert.SerializeObject(kb);
-            string token = ReceiveToken(update, id);
-            SendMessage(update.message.chat.id, reply_markup,token,reply_markup);
-        }
+     
+      
+       
         //    string Shop(string shop, out string reply_markup)
         //    {
         //        string answer = "Магазин продуктов";
@@ -262,28 +273,5 @@ namespace Bod.Controllers
         //        ChangeMessage(item, answer, replyMarkup);
         //    }
 
-        //    private string MainMenu(out string reply_markup)
-        //    {
-        //        List<Category> categories;
-        //        List<InlineKeyboardButton> kb = new List<InlineKeyboardButton>();
-        //        using (UpdateDbContext db = new UpdateDbContext())
-        //        {
-        //            categories = db.Categorys.ToList();
-        //        }
-        //        InlineKeyboard keyboard = new InlineKeyboard();
-        //        int i = 0;
-        //        foreach (var item in categories)
-        //        {
-        //            keyboard.AddButton(new InlineKeyboardButton(item.NameCategory, item.NameCategory), i++ / 2);
-        //        }
-        //        AddMainButton(keyboard);
-        //        reply_markup = JsonConvert.SerializeObject(keyboard);
-        //        return "Все категории магазина";
-        //    }
-
-        //}
-
-
-        //}
     }
 }

@@ -16,11 +16,17 @@ namespace BotShopOfficial.Controllers
     {
         public ActionResult Index()
         {
-            botEntities1 bt = new botEntities1();
-            List<Token>  t = bt.Token.ToList();
-            List<Category> cat = bt.Category.Where(x => x.Token.id == 1).ToList();
+            List<Category> cat;
+            List<Product> p;
+            //SendMessage(update.callback_query.from.id, category , ReceiveToken(update, id));
+            using (botEntities1 bd = new botEntities1())
+            {
 
-            string l;
+                cat = bd.Category.ToList();
+                p = cat.Where(x => x.NameCategory == "Category1M1").First().Product.ToList();
+            }
+            
+            string m;
             return View();
         }
         public void Add()
