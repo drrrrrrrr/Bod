@@ -13,10 +13,10 @@ namespace Bod.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class botEntities1 : DbContext
+    public partial class botEntities2 : DbContext
     {
-        public botEntities1()
-            : base("name=botEntities1")
+        public botEntities2()
+            : base("name=botEntities2")
         {
         }
     
@@ -27,6 +27,9 @@ namespace Bod.Models
     
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<Product> Product { get; set; }
+        public virtual DbSet<Recycle> Recycle { get; set; }
+        public virtual DbSet<Roles> Roles { get; set; }
         public virtual DbSet<Token> Token { get; set; }
+        public virtual DbSet<Users> Users { get; set; }
     }
 }

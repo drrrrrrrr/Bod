@@ -12,15 +12,14 @@ namespace Bod.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Product
+    public partial class Recycle
     {
-        public int ProductId { get; set; }
-        public string ProductName { get; set; }
-        public string ProductDescription { get; set; }
-        public int ProductPrice { get; set; }
-        public string ProductPhoto { get; set; }
-        public Nullable<int> CategoryId { get; set; }
+        public int Id { get; set; }
+        public string NameCategory { get; set; }
+        public string NameProduct { get; set; }
+        public string UserName { get; set; }
+        public int TokenId { get; set; }
     
-        public virtual Category Category { get; set; }
+        public virtual Token Token { get; set; }
     }
 }

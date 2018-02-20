@@ -9,4 +9,7 @@
   <parameter name="botEntities1-Web.config Connection String" description="botEntities1 Строка подключения в web.config, используемая приложением для доступа к базе данных." defaultValue="metadata=res://*/Models.botDb.csdl|res://*/Models.botDb.ssdl|res://*/Models.botDb.msl;provider=System.Data.SqlClient;provider connection string=&quot;data source=botshop.database.windows.net;initial catalog=bot;user id=rudoydmitry;password=654321vkVK;MultipleActiveResultSets=True;App=EntityFramework&quot;" tags="SqlConnectionString">
     <parameterEntry kind="XmlFile" scope="C:\\Users\\Дима\\source\\repos\\Bod\\Bod\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='botEntities1']/@connectionString" />
   </parameter>
+  <parameter name="botEntities2-Web.config Connection String" description="botEntities2 Строка подключения в web.config, используемая приложением для доступа к базе данных." defaultValue="metadata=res://*/Models.BotShopDb.csdl|res://*/Models.BotShopDb.ssdl|res://*/Models.BotShopDb.msl;provider=System.Data.SqlClient;provider connection string=&quot;data source=botshop.database.windows.net;initial catalog=bot;user id=rudoydmitry;password=654321vkVK;MultipleActiveResultSets=True;App=EntityFramework&quot;" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="C:\\Users\\Дима\\source\\repos\\Bod\\Bod\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='botEntities2']/@connectionString" />
+  </parameter>
 </parameters>

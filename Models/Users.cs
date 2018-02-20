@@ -12,23 +12,21 @@ namespace Bod.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Token
+    public partial class Users
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Token()
+        public Users()
         {
-            this.Category = new HashSet<Category>();
-            this.Recycle = new HashSet<Recycle>();
+            this.Token = new HashSet<Token>();
         }
     
         public int Id { get; set; }
-        public string token1 { get; set; }
-        public Nullable<int> UserID { get; set; }
+        public string Email { get; set; }
+        public string Passwords { get; set; }
+        public Nullable<int> RoleId { get; set; }
     
+        public virtual Roles Roles { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Category> Category { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Recycle> Recycle { get; set; }
-        public virtual Users Users { get; set; }
+        public virtual ICollection<Token> Token { get; set; }
     }
 }

@@ -23,11 +23,11 @@ namespace Bod.Controllers
             {
                 if (update.message != null)
                 {
-                    SendAnswer(update,update.message.chat.id, Text(update), id);
+                    SendAnswer(update, update.message.chat.id, Text(update), id);
                     return Ok();
                 }
-                if(update.callback_query != null)
-                { 
+                if (update.callback_query != null)
+                {
                     AnswerIsQuery(update, id);
                     return Ok();
                 }
@@ -39,7 +39,7 @@ namespace Bod.Controllers
             string answer = JsonConvert.SerializeObject(up);
             return answer;
         }
-        public void SendAnswer(Update update,long chat_id, string message, int? id)
+        public void SendAnswer(Update update, long chat_id, string message, int? id)
         {
             string reply_markup = "";
             string answer = "";
@@ -53,7 +53,7 @@ namespace Bod.Controllers
             }
             string token = ReceiveToken(update, id);
             if (update.message.chat.id != 0)
-                SendMessage(update.message.chat.id, answer, token,reply_markup);
+                SendMessage(update.message.chat.id, answer, token, reply_markup);
 
         }
 
@@ -72,11 +72,11 @@ namespace Bod.Controllers
                 client.UploadValues(address, nvc);
         }
 
-        string ReceiveToken(Update update,int? id)
+        string ReceiveToken(Update update, int? id)
         {
             string token;
-            using (botEntities1 bot = new botEntities1())
-                token = bot.Token.Where(x => x.id == id).First().token1;
+            using (botEntities2 bot = new botEntities2())
+                token = bot.Token.Where(x => x.Id == id).First().token1;
             return token;
         }
         void ChangeMessage(Update update, string message, int? id, string reply_markup = "")
@@ -94,28 +94,61 @@ namespace Bod.Controllers
             using (WebClient client = new WebClient())
                 client.UploadValues(adress, nvc);
         }
-
-        void AnswerIsQuery(Update update,int? id)
+    
+        void AnswerIsQuery(Update update, int? id)
         {
             string reply_markup = "";
             string answer = "ll";
-            
-            switch(update.callback_query.data)
+            string[] _data = update.callback_query.data.Split(' ');
+            switch (_data[0])
             {
                 case "?":
                     answer = "Вопрос!";
-                    MainMenu(update,id,out reply_markup);
+                    MainMenu(update, id, out reply_markup);
                     break;
                 case "about":
                     answer = "Что-нибудь можно написать";
                     MainMenu(update, id, out reply_markup);
                     break;
+                case "корзина" : answer = Recycle(update, id , out reply_markup);
+                    break;
                 default:
-                    answer = Shop(update.callback_query.data , update, id, out reply_markup); 
+                    answer = Shop(_data.Length<1?"":_data[0], _data.Length < 2 ? "" : _data[1], update, id, out reply_markup);
                     break;
             }
             answer += Environment.NewLine + update.callback_query.data;
             ChangeMessage(update, answer, id, reply_markup);
+        }
+        string Recycle(Update update,int? id,out string reply_markup)
+        {
+            string answer = "";
+            reply_markup = "";
+            TelegramRecycle rec = new TelegramRecycle(update,id);
+            string[] _data = update.callback_query.data.Split();
+            switch (_data[1] ?? "")
+            {
+                case "покупка":rec.AddBuy(_data[2], _data[3]);
+                    answer = Shop(_data[2], _data[3],update,id,out reply_markup);
+                    break;
+                default:break;
+
+            }
+
+            answer = "В корзине" + rec.Count + "  шт";
+            InlineKeyboard keyboard = new InlineKeyboard();
+            keyboard.AddButton(new InlineKeyboardButton("Назад", "about"));
+            AddMainButtons(keyboard);
+            reply_markup = JsonConvert.SerializeObject(keyboard);
+            return answer;
+        }
+        void AddRecycle(InlineKeyboard keyboard,string nameCategory,string nameProduct)
+        {
+            List<InlineKeyboardButton> line = new List<InlineKeyboardButton>()
+            {
+                new InlineKeyboardButton("Корзина", "корзина" ),
+                new InlineKeyboardButton("Добавить в корзину", "корзина покупка "+nameCategory+" "+nameProduct )
+            };
+            keyboard.AddLine(line);
         }
         void AddMainButtons(InlineKeyboard keyboard)
         {
@@ -126,26 +159,26 @@ namespace Bod.Controllers
             };
             keyboard.AddLine(line);
         }
-        string Shop(string shop,Update update, int? id,out string reply_markup)
+        string Shop(string category,string nameProduct, Update update, int? id, out string reply_markup)
         {
-            string category = shop.Split(' ')[0];
-            string nameProduct = shop.Split(' ').Length < 2 ? "" : shop.Split(' ')[1];
-            string answer="Привет";
+            //string category = shop.Split(' ')[0];
+            //string nameProduct = shop.Split(' ').Length < 2 ? "" : shop.Split(' ')[1];
+            string answer = "Привет";
             reply_markup = "";
-            List<Category> cat=null;
-            List<Product> p=null;
-           // SendMessage(update.callback_query.from.id, category , ReceiveToken(update, id));
-            using (botEntities1 bd = new botEntities1())
+            List<Category> cat = null;
+            List<Product> p = null;
+            // SendMessage(update.callback_query.from.id, category , ReceiveToken(update, id));
+            using (botEntities2 bd = new botEntities2())
             {
                 try
                 {
-                    cat = bd.Category.Where(x => x.Token.id == id).ToList();
-                    p= cat.Where(x => x.NameCategory == category).First().Product.ToList();
+                    cat = bd.Category.Where(x => x.Token.Id == id).ToList();
+                    p = cat.Where(x => x.NameCategory == category).First().Product.ToList();
                     if (nameProduct == "") nameProduct = p[0].ProductName;
                 }
                 catch
                 {
-              //   SendMessage(update.callback_query.from.id, "БД УПало", ReceiveToken(update, id));
+                    //   SendMessage(update.callback_query.from.id, "БД УПало", ReceiveToken(update, id));
                 }
             }
 
@@ -167,39 +200,83 @@ namespace Bod.Controllers
             int i = 0;
             foreach (Product k in p)
             {
+                if (nameProduct == k.ProductName)
+                    continue;
                 keyboard.AddButton(new InlineKeyboardButton(
 
-                  k.ProductName,k.Category.NameCategory + " " + k.ProductName), i++ / 2);
+                  k.ProductName, k.Category.NameCategory + " " + k.ProductName), i++ / 2);
             }
-
+            AddRecycle(keyboard, category, nameProduct);
             Product chooseProduct = p.Where(x => x.ProductName == nameProduct).First();
             answer += chooseProduct.ProductPrice + Environment.NewLine + "  " + " " + chooseProduct.ProductDescription;
+            keyboard.AddButton(new InlineKeyboardButton("Назад", "about"));
             AddMainButtons(keyboard);
             reply_markup = JsonConvert.SerializeObject(keyboard);
             return answer;
         }
-        string MainMenu(Update update,int? id,out string reply_markup)
+        string MainMenu(Update update, int? id, out string reply_markup)
         {
             List<Category> list;
             string token = "";
             int i = 0;
-            using (botEntities1 bd = new botEntities1())
+            using (botEntities2 bd = new botEntities2())
             {
-                list = bd.Category.Where(x => x.Token.id == id).ToList();
-                token = bd.Token.Where(x => x.id == id).First().token1;
+                list = bd.Category.Where(x => x.Token.Id == id).ToList();
+                token = bd.Token.Where(x => x.Id == id).First().token1;
             }
             InlineKeyboard keyboard = new InlineKeyboard();
-            foreach(Category k in list)
+            foreach (Category k in list)
             {
                 keyboard.AddButton(new InlineKeyboardButton(
                     k.NameCategory
-                    ),i++/2);
+                    ), i++ / 2);
             }
-            AddMainButtons(keyboard); 
+            AddMainButtons(keyboard);
             reply_markup = JsonConvert.SerializeObject(keyboard);
             return "Все категории";
         }
-     
+    }
+
+
+
+    class TelegramRecycle
+    {
+
+        string username;
+        int TokenIds;
+        public int? Count { get; private set; }
+        List<Recycle> rec;
+      
+        public TelegramRecycle(Update update,int? id)
+        {
+            this.username = update.callback_query.from.id.ToString();
+            TokenIds = (int)id;
+            using (botEntities2 bd = new botEntities2())
+            {
+                rec = bd.Recycle.Where(x => x.UserName == username).Where(x => x.Id == id).ToList();
+                Count = rec.Count;
+            }
+        }
+        public void AddBuy(string NameCategorys,string NameProducts)
+        {
+            using (botEntities2 bd = new botEntities2())
+            {
+                bd.Recycle.Add(new Recycle()
+                {
+                    NameCategory = NameCategorys,
+                    NameProduct = NameProducts,
+                    TokenId = TokenIds,
+                    UserName = username
+                }
+              
+                 );
+                bd.SaveChanges();
+
+            }
+        }
+
+    }
+
       
        
         //    string Shop(string shop, out string reply_markup)
@@ -253,25 +330,5 @@ namespace Bod.Controllers
 
         //        return answer;
         //    }
-        //    void AnswerIqQuery(Result item)
-        //    {
-        //        //   SendMessage(item.callback_query.from.id, "Здарова");
-        //        //MenuFrombd(item.callback_query.from.id);
-        //        // ChangeMessage(item);
-
-        //        string answer = "";
-        //        string replyMarkup = "";
-        //        switch (item.callback_query.data)
-        //        {
-        //            case "?": answer = "Вопрос в лс"; MainMenu(out replyMarkup); break;
-        //            case "about": answer = "Уэто магазин"; MainMenu(out replyMarkup); break;
-        //            default:
-        //                answer = Shop(item.callback_query.data, out replyMarkup);
-        //                break;
-        //        }
-        //        answer += Environment.NewLine + item.callback_query.data;
-        //        ChangeMessage(item, answer, replyMarkup);
-        //    }
 
     }
-}

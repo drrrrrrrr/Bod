@@ -22,7 +22,7 @@ namespace Bod.Models
     
         public int CategoryId { get; set; }
         public string NameCategory { get; set; }
-        public Nullable<int> TokenId { get; set; }
+        public int TokenId { get; set; }
     
         public virtual Token Token { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

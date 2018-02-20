@@ -19,28 +19,17 @@ namespace BotShopOfficial.Controllers
             List<Category> cat;
             List<Product> p;
             //SendMessage(update.callback_query.from.id, category , ReceiveToken(update, id));
-            using (botEntities1 bd = new botEntities1())
-            {
+            //using (botEntities1 bd = new botEntities1())
+            //{
 
-                cat = bd.Category.ToList();
-                p = cat.Where(x => x.NameCategory == "Category1M1").First().Product.ToList();
-            }
+            //    cat = bd.Category.ToList();
+            //    p = cat.Where(x => x.NameCategory == "Category1M1").First().Product.ToList();
+            //}
             
             string m;
             return View();
         }
-        public void Add()
-        {
-            botEntities1 bt = new botEntities1();
-            Product p = new Product
-            {
-                CategoryId = 1,
-                ProductDescription = "safasdfasdf",
-                ProductPrice = 200,
-                ProductName = "Ничего"
-            };
-            bt.Product.Add(p);
-        }
+   
         public string About()
         {
             //List<string> tokens = new List<string>();
@@ -53,7 +42,7 @@ namespace BotShopOfficial.Controllers
             //    SetWebHook(tokens[i], i);
             //}
             string k = "1";
-            using (botEntities1 bd = new botEntities1())
+            using (botEntities2 bd = new botEntities2())
             {
                 //Token a = new Token();
                 //    a.token1 = "513919028:AAH3YpNoZAeZwo5NItLEmIXUhobfR5ziSRU";
@@ -67,10 +56,10 @@ namespace BotShopOfficial.Controllers
                 //    k = "12";
 
                 //bd.SaveChanges();
-                Token m = bd.Token.Where(x => x.id == 1).First();
-                SetWebHook(m.token1, m.id);
-                Token m2 = bd.Token.Where(x => x.id == 2).First();
-                SetWebHook(m2.token1, m2.id);
+                Token m = bd.Token.Where(x => x.Id == 1).First();
+                SetWebHook(m.token1, m.Id);
+                Token m2 = bd.Token.Where(x => x.Id == 3).First();
+                SetWebHook(m2.token1, m2.Id);
 
             }
             return "Сработало" + k ;
